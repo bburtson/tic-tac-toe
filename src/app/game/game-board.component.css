@@ -1,0 +1,53 @@
+
+table {
+    border-collapse: collapse;
+    width:100%;
+}
+
+table, td {
+    height: 105px;
+    border: 1px solid #2C3D4F;
+}
+td{
+     background-color: #4C5C6B; 
+}
+
+.game-piece{
+    width:100%;
+    height:100%;
+    opacity: 1;
+    transition: opacity .50s ease-in-out;
+    -moz-transition: opacity .50s ease-in-out;
+    -webkit-transition: opacity .50s ease-in-out;
+}
+
+.x{
+    background: url('/assets/js-icon.png') no-repeat;
+    background-size: contain;
+    background-position:center;
+}
+.o{
+    background: url('/assets/csharp-icon.png') no-repeat;
+    background-size: contain;
+    background-position:center;
+}
+
+.dim{
+    opacity: 0.4;
+}
+
+#team-indicator{
+    transition: all .2s ease-in-out;
+    margin: 10px;
+    width:40px;
+    height:40px;
+    border-radius: 10px;
+    opacity: 0.5;
+}
+
+#team-indicator.turn{
+     transform: scale(1.4); 
+     box-shadow: 1px 5px 15px #888888;
+     opacity: 1;
+     
+}
