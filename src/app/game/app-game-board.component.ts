@@ -3,10 +3,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NgModel } from '@angular/forms';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/timer';
-import { GameOverOptions } from '../models/GameOverOptions';
 import { TeamData } from '../models/TeamData';
 import { Position } from '../models/Position';
-import './extensions/array';
 
 @Component({
     selector: 'app-game-board',
@@ -14,66 +12,62 @@ import './extensions/array';
     styleUrls: ['./app-game-board.component.css']
 })
 export class GameBoardComponent implements OnInit {
-    private teamData: TeamData;
+    public teamData: TeamData;
     public gameOver = false;
-    get isUsersTurn() { return this.teamData.playerTeam === this.currentTurn; }
     public turnCount = 0;
     public currentTurn = 'x';
+    get isUsersTurn() { return this.teamData.playerTeam === this.currentTurn; }
     private readonly cornerPositions: number[] = [0, 2, 6, 8];
     private readonly edgePositions: number[] = [1, 3, 5, 7];
     private readonly winConditions: number[][] = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]];
+
     public positions: Position[] = [new Position(0), new Position(1), new Position(2),
     new Position(3), new Position(4), new Position(5),
     new Position(6), new Position(7), new Position(8)];
 
     private userPositions: Array<Position> = new Array<Position>();
     private aiPositions: Array<Position> = new Array<Position>();
-    private availableWinConditons: Array<number[]>;
-    constructor(_route: ActivatedRoute, public router: Router) {
-        this.availableWinConditons = this.winConditions.slice();
+
+    private availableWinConditons: number[][] = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]];
+
+    constructor(private _route: ActivatedRoute, public router: Router) {
         this.teamData = new TeamData(_route.snapshot.params['team']);
     }
 
     ngOnInit() {
         this.positions.forEach(pos => {
-            pos.onPositionSet.subscribe((e) => this.toggleTurn());
+            pos.onPositionSet.subscribe((e) => {
+                this.toggleTurn();
+            });
         });
 
-        if (!this.isUsersTurn) {
-            this.setAiPosition();
-        }
+        if (!this.isUsersTurn) { this.setAiPosition(); }
     }
 
     private toggleTurn(): void {
         this.turnCount++;
-
         this.currentTurn = this.currentTurn === 'x' ? 'o' : 'x';
-
-        if (!this.isUsersTurn) {
-            this.setAiPosition();
-        }
-
-        this.checkGameState(this.userPositions);
+        if (!this.isUsersTurn) { this.setAiPosition(); }
     }
 
     public setUserPosition(posValue: number): void {
         if (this.isUsersTurn && this.positions[posValue].isOccupied === false) {
             this.userPositions.push(this.positions[posValue]);
-
             this.positions[posValue].occupant = this.teamData.playerTeam;
+            this.checkGameState(this.userPositions);
         }
     }
 
     public setAiPosition(): void {
+
         const posNum = this.computeAiPosition();
         // sets AI's position after some time to give some illusion that the AI is "thinking"
         // purely for user experience
-        const timer = Observable.timer(1000, 1000).subscribe(seconds => {
-            if (this.gameOver === true) {
-                timer.unsubscribe();
-            }
+        const timer = Observable.timer(1000, 1000).subscribe((seconds) => {
 
-            if (seconds >= 1) {
+            if (this.gameOver === true) { timer.unsubscribe(); }
+
+            if (seconds === 1) {
                 this.positions[posNum].occupant = this.teamData.aiTeam;
                 this.aiPositions.push(this.positions[posNum]);
                 this.checkGameState(this.aiPositions);
@@ -81,33 +75,35 @@ export class GameBoardComponent implements OnInit {
             }
         });
     }
+
+
     // main processing pipeline for AI desicions
     // *** NOTE: all methods here return -1 if no respective position is found for each strategy
     public computeAiPosition(): number {
         let position = this.computeFirstMove();
         // check if ai can win return -1 if no win positions available...
-        if (position === -1) position = this.checkWinPositions(this.aiPositions, "ai");
+        if (position === -1) { position = this.checkWinPositions(this.aiPositions, 'ai'); }
         // attempt to trap or fork the user
-        if (position === -1) position = this.computeTrapPositions();
+        if (position === -1) { position = this.computeTrapPositions(); }
         // defend against user traps / forks
-        if (position === -1) position = this.computeTrapDefense();
+        if (position === -1) { position = this.computeTrapDefense(); }
         // simply just block the user if they have a possible win condition, (passing users positions here)
-        if (position === -1) position = this.checkWinPositions(this.userPositions, "user");
+        if (position === -1) { position = this.checkWinPositions(this.userPositions, 'user'); }
         // if nothing else matters then get a random spot.
-        if (position === -1) position = this.generateRandomPosition();
+        if (position === -1) { position = this.generateRandomPosition(); }
 
         return position;
     }
 
     private computeFirstMove(): number {
-        // Ai is first take the middle setting turncount for re-eval of trap/defense/offense
-        if (this.aiPositions.length === 0 && this.turnCount === 0) { this.turnCount--; return 4 };
+        // Ai is first take the middle setting turncount to force re-eval of trap/defense/offense
+        if (this.aiPositions.length === 0 && this.turnCount === 0) { this.turnCount--; return 4; }
         // setup to avoid traps/fork strategies
         if (this.turnCount === 1) {
             // if user took center, ai will take a corner taking 6 just for simplicty
-            if (this.userPositions[0].position === 4) return 6;
+            if (this.userPositions[0].position === 4) { return 6; }
             // if user took corner ai takes center
-            if (this.userPositions[0].isCorner && this.aiPositions.length === 0) return 4;
+            if (this.userPositions[0].isCorner && this.aiPositions.length === 0) { return 4; }
         }
         // no control was hit for other return statements so return -1
         // to evaluate additional strategies in the calling method...
@@ -117,17 +113,12 @@ export class GameBoardComponent implements OnInit {
     // checks for possible positions that would result it a win and removes it from possible conditions array
     private checkWinPositions(playerPositions: Array<Position>, entity: string): number {
         const matches = this.resolvePossibleMatches(playerPositions);
-
         let returnPosition: number, result: number;
-
         matches.forEach((obj) => {
             result = this.removePossibleWinCondition(obj.condition, obj.matchedVals);
 
-            if (!this.positions[result].isOccupied) {
-                returnPosition = result;
-            }
+            if (!this.positions[result].isOccupied) { returnPosition = result; }
         });
-
         return returnPosition !== undefined ? returnPosition : -1;
     }
 
@@ -155,15 +146,11 @@ export class GameBoardComponent implements OnInit {
 
     private computeTrapDefense(): number {
         let pos = this.checkWinPositions(this.userPositions, 'user');
-
         if (this.turnCount === 3 && this.aiPositions.length === 1) {
             if (this.userPositions.every(p => p.isCorner)) {
                 return pos === -1 ? 1 : pos;
-            }
-            else if (pos === -1) {
-                this.positions.forEach(p => {
-                    pos = p.isCorner && !p.isOccupied ? p.position : -1;
-                });
+            } else if (pos === -1) {
+                this.positions.forEach(p => { pos = p.isCorner && !p.isOccupied ? p.position : -1; });
             }
         }
         return pos;
@@ -171,44 +158,28 @@ export class GameBoardComponent implements OnInit {
 
     private generateRandomPosition(): number {
         let pos;
-        // stop infinite loop remove later when end-game branches control flow
-        if (this.positions.some(p => p.isOccupied === false)) {
-            do {
-                pos = Math.floor(Math.random() * this.positions.length);
-            }
-            while (this.positions[pos].isOccupied === true);
-        }
+        do { pos = Math.floor(Math.random() * this.positions.length); }
+        while (this.positions[pos].isOccupied === true);
         return pos;
     }
 
     private removePossibleWinCondition(conditionArray: number[], twoOfThree: number[]): number {
         let index = conditionArray.indexOf(twoOfThree[0]);
-
         conditionArray.splice(index, 1);
-
         index = conditionArray.indexOf(twoOfThree[1]);
-
         conditionArray.splice(index, 1);
-
         index = conditionArray[0];
-
         return index;
     }
 
     private resolvePossibleMatches(playerPositions: Array<Position>): Array<any> {
         const matches = new Array<any>();
-
         for (const row of this.availableWinConditons) {
             const match = row.reduce((acc, cur) => {
-                if (playerPositions.some(p => p.position === cur)) {
-                    acc.push(cur);
-                }
+                if (playerPositions.some(p => p.position === cur)) { acc.push(cur); }
                 return acc;
             }, []);
-
-            if (match.length === 2) {
-                matches.push({ matchedVals: match, condition: row });
-            }
+            if (match.length === 2) { matches.push({ matchedVals: match, condition: row }); }
         }
         return matches;
     }
@@ -216,47 +187,40 @@ export class GameBoardComponent implements OnInit {
     // For advancing user thorugh the application.. (game over)
     private checkGameState(playerPositions: Array<Position>): void {
         if (!this.gameOver) {
-
             for (const permutation of this.winConditions) {
-                const currentWinPositions = permutation.reduce((acc, cur) => {
-                    if (playerPositions.some(p => p.position === cur)) {
-                        acc.push(cur);
-                    }
+                const winningPositions = permutation.reduce((acc, cur) => {
+                    if (playerPositions.some(p => p.position === cur)) { acc.push(cur); }
                     return acc;
                 }, []);
 
-                if (currentWinPositions.length > 2) {
-                    for (let i = 0; i < this.positions.length; i++) {
-                        if (!currentWinPositions.some(p => p === this.positions[i].position)) {
-                            this.positions[i].setOpacityClass();
-                        }
-                    }
-                    this.endGame(GameOverOptions[playerPositions[0].occupant]);
-                }
+                if (winningPositions.length > 2) { this.endGame(winningPositions); }
             }
 
-            if (this.aiPositions.length + this.userPositions.length === 9) {
-                this.endGame(GameOverOptions.Cat);
-            }
+            if (this.aiPositions.length + this.userPositions.length === 8) { this.endGame(); }
         }
     }
 
-    private endGame(gameResult: GameOverOptions): void {
+    private endGame(winningPositions?: any): void {
         this.gameOver = true;
-
-        const timer = Observable.timer(1000, 1000).subscribe((s) => {
-            if (s === 3) {
-                this.router.navigate(['/']);
+        if (winningPositions) {
+            for (let i = 0; i < this.positions.length; i++) {
+                if (!winningPositions.some(p => p === this.positions[i].position)) {
+                    this.positions[i].setOpacityClass();
+                }
             }
-        });
 
+        } else {
+            this.positions.forEach(p => p.setOpacityClass());
+        }
+
+        const timer = Observable.timer(1000, 1000).subscribe(seconds => {
+            if (seconds === 3) { this.router.navigate(['/']); }
+        });
     }
 
     public setClass(entity: string) {
         const team = entity === 'player' ? this.teamData.playerTeam : this.teamData.aiTeam;
-
         const classes = { x: team === 'x', o: team === 'o', turn: this.currentTurn === team };
-
         return classes;
     }
 }
