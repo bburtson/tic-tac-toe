@@ -1,53 +1,97 @@
 <div class="row text-center">
-    <div class="col-md-6 col-md-offset-3">
-        <div class="row">
-        <div class="col-xs-2">
-            <div id="team-indicator" class="game-piece" [ngClass]="setClass('player')"></div>
-        </div>
-        <div class="col-xs-8">
-            <span class="lead"></span>
-        </div>
-        <div class="col-xs-2">
-            <div id="team-indicator" class="game-piece pull-right" [ngClass]="setClass()"></div>
-        </div>
+  <div class="col-md-6 col-md-offset-3">
+    <div class="row">
+      <div class="col-xs-2">
+        <div
+          id="team-indicator"
+          class="game-piece"
+          [ngClass]="setClass('player')"
+        ></div>
+      </div>
+      <div class="col-xs-8">
+        <span class="lead"></span>
+      </div>
+      <div class="col-xs-2">
+        <div
+          id="team-indicator"
+          class="game-piece pull-right"
+          [ngClass]="setClass()"
+        ></div>
+      </div>
     </div>
-        <table>
-            <tbody>
-                <tr>
-                    <td>
-                        <div (click)="setUserPosition(0)" class="game-piece" [ngClass]="positions[0].occupant"></div>
-                    </td>
-                    <td>
-                        <div (click)="setUserPosition(1)" class="game-piece" [ngClass]="positions[1].occupant"></div>
-                    </td>
-                    <td>
-                        <div (click)="setUserPosition(2)" class="game-piece" [ngClass]="positions[2].occupant"></div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <div (click)="setUserPosition(3)" class="game-piece" [ngClass]="positions[3].occupant"></div>
-                    </td>
-                    <td>
-                        <div (click)="setUserPosition(4)" class="game-piece" [ngClass]="positions[4].occupant"></div>
-                    </td>
-                    <td>
-                        <div (click)="setUserPosition(5)" class="game-piece" [ngClass]="positions[5].occupant"></div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <div (click)="setUserPosition(6)" class="game-piece" [ngClass]="positions[6].occupant"></div>
-                    </td>
-                    <td>
-                        <div (click)="setUserPosition(7)" class="game-piece" [ngClass]="positions[7].occupant"></div>
-                    </td>
-                    <td>
-                        <div (click)="setUserPosition(8)" class="game-piece" [ngClass]="positions[8].occupant"></div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <br><br><br><br><br>
-    </div>
+    <table>
+      <tbody>
+        <tr>
+          <td>
+            <div
+              (click)="setUserPosition(0)"
+              class="game-piece"
+              [ngClass]="positions[0].occupant"
+            ></div>
+          </td>
+          <td>
+            <div
+              (click)="setUserPosition(1)"
+              class="game-piece"
+              [ngClass]="positions[1].occupant"
+            ></div>
+          </td>
+          <td>
+            <div
+              (click)="setUserPosition(2)"
+              class="game-piece"
+              [ngClass]="positions[2].occupant"
+            ></div>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <div
+              (click)="setUserPosition(3)"
+              class="game-piece"
+              [ngClass]="positions[3].occupant"
+            ></div>
+          </td>
+          <td>
+            <div
+              (click)="setUserPosition(4)"
+              class="game-piece"
+              [ngClass]="positions[4].occupant"
+            ></div>
+          </td>
+          <td>
+            <div
+              (click)="setUserPosition(5)"
+              class="game-piece"
+              [ngClass]="positions[5].occupant"
+            ></div>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <div
+              (click)="setUserPosition(6)"
+              class="game-piece"
+              [ngClass]="positions[6].occupant"
+            ></div>
+          </td>
+          <td>
+            <div
+              (click)="setUserPosition(7)"
+              class="game-piece"
+              [ngClass]="positions[7].occupant"
+            ></div>
+          </td>
+          <td>
+            <div
+              (click)="setUserPosition(8)"
+              class="game-piece"
+              [ngClass]="positions[8].occupant"
+            ></div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <br /><br /><br /><br /><br />
+  </div>
 </div>

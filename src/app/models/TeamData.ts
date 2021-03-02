@@ -1,19 +1,19 @@
 export class TeamData {
+  private _playerTeam: string;
 
-    private _playerTeam: string;
+  set playerTeam(value: string) {
+    this._playerTeam = value;
 
-    set playerTeam(value: string) {
+    this.aiTeam = this.playerTeam === "x" ? "o" : "x";
+  }
 
-        this._playerTeam = value;
+  get playerTeam() {
+    return this._playerTeam;
+  }
 
-        this.aiTeam = this.playerTeam === 'x' ? 'o' : 'x';
-    }
+  public aiTeam: string;
 
-    get playerTeam(){ return this._playerTeam; }
-
-    public aiTeam: string;
-
-    constructor(playerTeam: string) {
-        this.playerTeam  = playerTeam;
-    }
+  constructor(playerTeam: string) {
+    this.playerTeam = playerTeam;
+  }
 }

@@ -1,8 +1,8 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component } from "@angular/core";
 
 @Component({
-    selector: 'app-pregame-menu',
-    templateUrl: './app-pregame-menu.component.html',
-    styleUrls: ['./app-pregame-menu.component.css']
+  selector: "app-pregame-menu",
+  templateUrl: "./app-pregame-menu.component.html",
+  styleUrls: ["./app-pregame-menu.component.css"],
 })
-export class PreGameMenuComponent { }
+export class PreGameMenuComponent {}

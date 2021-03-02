@@ -1,25 +1,21 @@
-import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
-import { RouterModule } from '@angular/router';
-import { AppComponent } from './app.component';
-import { PreGameMenuComponent } from './app-pregame-menu.component';
-import { GameBoardComponent } from './game/app-game-board.component';
+import { RouterModule } from "@angular/router";
+import { NgModule } from "@angular/core";
+import { AppComponent } from "./app.component";
+import { PreGameMenuComponent } from "./app-pregame-menu.component";
+import { GameBoardComponent } from "./game/app-game-board.component";
+import { BrowserModule } from "@angular/platform-browser";
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    GameBoardComponent,
-    PreGameMenuComponent
-  ],
+  declarations: [AppComponent, GameBoardComponent, PreGameMenuComponent],
   imports: [
     BrowserModule,
     RouterModule.forRoot([
-      { path: '', component: PreGameMenuComponent },
-      { path: 'gameboard/:team', component: GameBoardComponent },
-      { path: '**', redirectTo: '', pathMatch: 'full'}
-    ])
+      { path: "", component: PreGameMenuComponent },
+      { path: "gameboard/:team", component: GameBoardComponent },
+      { path: "**", redirectTo: "", pathMatch: "full" },
+    ]),
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}
